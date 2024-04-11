@@ -197,7 +197,8 @@ class Analyzer:
                     for line in lines[method_start:invoke_index]:
                         line_strip = line.strip()
                         assignment_match = re.match(
-                            r"(const-string|new-instance) (\w+), (.+)",
+                            (r"(const-\d+|const-string|new-instance|move-\w+)"
+                             r" (\w+), (.+)"),
                             line_strip)
                         if assignment_match:
                             _, register, value = assignment_match.groups()
