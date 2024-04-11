@@ -1,0 +1,164 @@
+{
+    "permissionList": {
+        "POST_NOTIFICATIONS": "Allows an app to post notifications on the device.",
+        "REQUEST_INSTALL_PACKAGES": "Allows an app to request the installation of packages. Apps can prompt the user to install applications, subject to user approval.",
+        "MANAGE_DEVICE_POLICY_INSTALL_UNKNOWN_SOURCES": "Allows an app to request the installation of packages. Apps can prompt the user to install applications, subject to user approval.",
+        "QUERY_ALL_PACKAGES": "Allows an app to query any normal app on the device, providing visibility into the inventory of installed apps.",
+        "INSTALL_SHORTCUT": "Allows an app to add shortcuts without user intervention.",
+        "READ_PHONE_STATE": "Grants access to the phone's state, including phone number, current cellular network, and ongoing call status.",
+        "CALL_PHONE": "Allows making phone calls on behalf of the user, which could be abused for unauthorized calls.",
+        "MODIFY_AUDIO_SETTINGS": "Allows an application to modify global audio settings.",
+        "SEND_SMS": "Permits sending SMS messages on behalf of the user, potentially leading to unauthorized charges or spam.",
+        "READ_EXTERNAL_STORAGE": "Grants read access to external storage, potentially exposing sensitive user data.",
+        "ACCESS_NOTIFICATION_POLICY": "Allows an app to access notification policy settings.",
+        "RECEIVE_SMS": "Allows an application to receive SMS messages, which could be used for surveillance.",
+        "RECEIVE_BOOT_COMPLETED": "Allows an application to receive the ACTION_BOOT_COMPLETED broadcast after the system finishes booting.",
+        "FOREGROUND_SERVICE": "Allows a regular application to use Service.startForeground.",
+        "VIBRATE": "Allows access to the vibrator.",
+        "WRITE_SETTINGS": "Allows an application to read or write the system settings.",
+        "ADD_VOICEMAIL": "Allows an application to add voicemails into the system.",
+        "REQUEST_COMPANION_RUN_IN_BACKGROUND": "Allows a companion app to run in the background.",
+        "ACCESS_NETWORK_STATE": "Allows applications to access information about networks.",
+        "INTERNET": "Allows applications to open network sockets.",
+        "REQUEST_IGNORE_BATTERY_OPTIMIZATIONS": "Permission to whitelist apps from battery optimizations.",
+        "REQUEST_DELETE_PACKAGES": "Allows an application to request deleting packages.",
+        "REQUEST_COMPANION_USE_DATA_IN_BACKGROUND": "Allows a companion app to use data in the background.",
+        "REORDER_TASKS": "Allows an application to change the Z-order of tasks.",
+        "WAKE_LOCK": "Allows using PowerManager WakeLocks to keep processor from sleeping or screen from dimming.",
+        "ACCESS_WIFI_STATE": "Allows applications to access information about Wi-Fi networks.",
+        "READ_SMS": "Allows reading the user's SMS messages, which might compromise privacy.",
+        "USES_POLICY_FORCE_LOCK": "Allows the app to use device administration features."
+      },
+    "method_signatures": {
+        "system": {
+            "className": "Ljava/lang/System",
+            "functions": [
+                {"loadLibrary": {"methodNames": [[""]], "assignments": [{}],"Description":"Loads dropped Dex/Jar, may need unpacking"}}
+            ]
+        },
+        "powerManager": {
+            "className": "Landroid/os/PowerManager",
+            "functions": [
+                {
+                    "isIgnoringBatteryOptimizations": {"methodNames": [[""]], "assignments": [{}],"Description":"Requests to ignore battery optimizations"}
+                },
+                {"WakeLock": {"methodNames": [["isHeld", "acquire"]], "assignments": [{}],"Description": "Acquires the wake lock."}}
+            ]
+        }, 
+        "packageManager": {
+            "className": "Landroid/content/pm/PackageManager",
+            "functions": [
+                {
+                    "setComponentEnabledSetting": {"methodNames": [[""]], "assignments": [{}], "Description":"Removes its application launcher (likely to stay hidden)."},
+                    "getInstalledPackages": {"methodNames": [[""]], "assignments": [{}], "Description":"Get all application list (Might be used in an attempt to overlay legitimate apps)."}
+                }
+            ]
+        },
+        "packageInstaller": {
+            "className": "Landroid/content/pm/PackageInstaller",
+            "functions": [
+                {
+                    "createSession": {"methodNames": [[""]], "assignments": [{}], "Description":"Try to install another application (Maybe Dropper)."},
+                    "openSession": {"methodNames": [[""]], "assignments": [{}], "Description":"Try to install another application (Maybe Dropper)."}
+                }
+            ]
+        },
+        "accontManager": {
+            "className": "Landroid/accounts/AccountManager",
+            "functions": [
+                {
+                    "getAccounts": {"methodNames": [[""]], "assignments": [{}],"Description":"Getting accounts on phone"}
+                }
+            ]
+        },
+        "notificationManager": {
+            "className": "Landroid/app/NotificationManager",
+            "functions": [{"cancelAll": {"methodNames": [[""]], "assignments": [{}],"Description":"Removes a system notification. (Potential, library code)"}}]
+        },
+        "telephonyManager": {
+            "className": "Landroid/telephony/TelephonyManager",
+            "functions": [
+                {
+                    "getSimState": {"methodNames": [[""]], "assignments": [{}],"Description":"Reads information about phone network operator."},
+                    "getSimOperatorName": {"methodNames": [[""]], "assignments": [{}],"Description":"Reads information about phone network operator."},
+                    "getLine1Number": {"methodNames": [[""]], "assignments": [{}],"Description":"Reads information about phone number."},
+                    "getNetworkOperatorName": {"methodNames": [[""]], "assignments": [{}],"Description":"Reads information about phone network operator."},
+                    "getImei": {"methodNames": [[""]], "assignments": [{}],"Description":"Reads information about phone. (Potential, library code)"}
+                }
+            ]
+        },
+        "smsManager": {
+            "className": "Landroid/telephony/SmsManager",
+            "functions": [
+                {
+                    "getDefault": {"methodNames": [[""]], "assignments": [{}],"Description":"Get default sms application from phone."},
+                    "sendTextMessage": {"methodNames": [[""]], "assignments": [{}],"Description":"Send sms from phone hidden."}
+                }
+            ]
+        },
+        "smsMessage": {
+            "className": "Landroid/telephony/SmsMessage",
+            "functions": [
+                {
+                    "getMessageBody": {"methodNames": [[""]], "assignments": [{}],"Description":"Read sms from phone."}
+                }
+            ]
+        },
+        "apacheHttp": {
+            "className": "Lorg/apache/http",
+            "functions": [
+                {"HttpPost": {"methodNames": [[""]], "assignments": [{}],"Description":"Uses HttpClient for send data."}},
+                {"HttpResponse": {"methodNames": [[""]], "assignments": [{}],"Description":"Uses HttpClient for receive data."}}
+            ]
+        },
+        "netHttp": {
+            "className": "Ljava/net/HttpURLConnection",
+            "functions": [
+                {"connect": {"methodNames": [[""]], "assignments": [{}],"Description":"Uses HttpURLConnection for send data."}},
+                {"getResponseCode": {"methodNames": [[""]], "assignments": [{}],"Description":"Uses getResponseCode for receive data."}}
+            ]
+        },
+        "crypto": {
+            "className": "Ljavax/crypto/spec/SecretKeySpec",
+            "functions": [
+                {
+                    "SecretKeySpec": {"methodNames":[[""]], "assignments": [{}],"Description":"Uses Crypto APIs (Might try to encrypt user data)."}
+                }
+            ]
+        },
+        "mediaProjection": {
+            "className": "Landroid/media/projection/MediaProjection",
+            "functions": [
+                {
+                    "createVirtualDisplay": {"methodNames":[[""]], "assignments": [{}],"Description":"Contains a screen recorder (to take screenshot)"}
+                }
+            ]
+        },
+        "devicePolicyManager": {
+            "className": "Landroid/app/admin/DevicePolicyManager",
+            "functions": [
+                {
+                    "isAdminActive": {"methodNames": [[""]], "assignments": [{}],"Description":"Checking device admin permission"},
+                    "lockNow": {"methodNames": [[""]], "assignments": [{}],"Description":"Locking device with device admin permission, lock biometric login"}
+                }
+            ]
+        },
+        "accessibilityService": {
+            "className": "Landroid/accessibilityservice/AccessibilityService",
+            "functions": [
+                {
+                    "onServiceConnected": {"methodNames": [[""]], "assignments": [{}],"Description":"Uses accessibility services (likely to control other applications)."},
+                    "onAccessibilityEvent": {"methodNames": [[""]], "assignments": [{}],"Description":"Uses accessibility services (likely to control other applications)."}
+                }
+            ]
+        },
+        "webView": {
+            "className": "Landroid/webkit/WebView",
+            "functions": [
+                {"loadDataWithBaseURL": {"methodNames":[[""]], "assignments": [{}],"Description":"Potential overlay attacks."}},
+                {"loadUrl": {"methodNames":[[""]], "assignments": [{}],"Description":"Potential overlay attacks."}},
+                {"addJavascriptInterface": {"methodNames":[[""]], "assignments": [{}],"Description": "Getting data from overlay."}}
+            ]
+        }
+    }
+}
