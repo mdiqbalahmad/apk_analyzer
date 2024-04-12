@@ -2,6 +2,7 @@ from androguard.misc import AnalyzeAPK
 from androguard.misc import AnalyzeDex
 from pathlib import Path
 from loguru import logger
+from collections import defaultdict
 
 
 import sys
@@ -15,7 +16,7 @@ import argparse
 
 class Analyzer:
     def __init__(self, apkPath, config_file_path, output_dir, debug_mode):
-        self.apk_path = sys.argv[1]
+        self.apk_path = apkPath
         self.output_dir = Path(output_dir)
         self.config_file_path = Path(config_file_path)
         self.debug_mode = debug_mode
@@ -122,10 +123,12 @@ class Analyzer:
                             for key in assignment:
                                 value = assignment[key]
                                 for res_key in res_assignment:
-                                    res_value = res_assignment[res_key]
-                                    if key == res_key:
-                                        if value == res_value:
-                                            ex_founded = False
+                                    res_values = res_assignment[res_key]
+                                    for res_value in res_values:
+                                        if key == res_key:
+                                            print(value, res_value)
+                                            if value == res_value:
+                                                ex_founded = False
 
                         if len(results) != 0 and ex_founded is False:
                             normal_results = "None"
@@ -170,13 +173,18 @@ class Analyzer:
                         if search_query in file.read():
                             return file_path
 
-    def parse_smali_for_method(self, search_invoke) -> set:
+    def parse_smali_for_method(self, search_invoke):
         smali_file_path = self.search_in_smali_files(search_invoke)
         if smali_file_path:
+            assignment_match_regex = (
+                r"(const/\d+|const-string|new-instance|move-result-object)"
+                r" (\w+), \"?([^\"\s]+)\"?"
+            )
             with open(smali_file_path, "r", encoding="utf-8") as file:
                 lines = file.readlines()
 
-            results = {"assignments": {}, "invoke_details": None, "labels": []}
+            results = {"assignments": defaultdict(list),
+                       "invoke_details": None}
             invoke_index = None
 
             for i, line in enumerate(lines):
@@ -190,28 +198,36 @@ class Analyzer:
                     if lines[i].strip().startswith(".method"):
                         method_start = i
                         break
-                    if lines[i].strip().startswith(":L"):
-                        results["labels"].append(lines[i].strip())
 
                 if method_start is not None:
                     for line in lines[method_start:invoke_index]:
                         line_strip = line.strip()
                         assignment_match = re.match(
-                            (r"(const-\d+|const-string|new-instance|move-\w+)"
-                             r" (\w+), (.+)"),
-                            line_strip)
+                            assignment_match_regex,
+                            line_strip,
+                        )
                         if assignment_match:
-                            _, register, value = assignment_match.groups()
-                            results["assignments"][register] = value.strip('"')
+                            opcode, register, value = assignment_match.groups()
+                            results["assignments"][register].append(
+                                value.strip('"')
+                            )
 
                     invoke_line = lines[invoke_index].strip()
                     invoke_match = re.match(r"invoke-\w+ {(.+?)}, (.+)",
                                             invoke_line)
                     if invoke_match:
                         registers, invoke_signature = invoke_match.groups()
+                        register_values = {}
+                        for reg in registers.split(", "):
+                            reg = reg.strip()
+                            if reg in results["assignments"]:
+                                last_value = results["assignments"][reg][-1]
+                                register_values[reg] = last_value
+                            else:
+                                register_values[reg] = "Unknown"
                         results["invoke_details"] = {
                             "signature": invoke_signature,
-                            "registers": registers.split(", ")
+                            "registers": register_values,
                         }
 
             return results
