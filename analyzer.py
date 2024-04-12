@@ -126,12 +126,11 @@ class Analyzer:
                                     res_values = res_assignment[res_key]
                                     for res_value in res_values:
                                         if key == res_key:
-                                            print(value, res_value)
                                             if value == res_value:
                                                 ex_founded = False
 
                         if len(results) != 0 and ex_founded is False:
-                            normal_results = "None"
+                            normal_results = ""
                             if not self.debug_mode and \
                                     len(results["assignments"]) > 0:
                                 normal_results = "("
@@ -142,24 +141,24 @@ class Analyzer:
                                     )
                                 normal_results = normal_results[:-2] + ")"
                             finding = (
-                                "{}.{}.{}\n"
+                                "{}.{}{}\n"
                                 "Parameters: {}\n"
                                 "Description: {}\n"
                             ).format(
                                 method,
                                 function,
-                                methodName,
+                                "." + methodName if methodName else "()",
                                 results if self.debug_mode else normal_results,
                                 functions[function]["Description"],
                             )
                 else:
                     finding = (
-                        "{}.{}.{}\n"
+                        "{}.{}{}\n"
                         "Description: {}\n"
                         ).format(
                         method,
                         function,
-                        methodName,
+                        "." + methodName if methodName else "()",
                         functions[function]["Description"],
                     )
                 return finding
@@ -173,12 +172,12 @@ class Analyzer:
                         if search_query in file.read():
                             return file_path
 
-    def parse_smali_for_method(self, search_invoke):
+    def parse_smali_for_method(self, search_invoke) -> set:
         smali_file_path = self.search_in_smali_files(search_invoke)
         if smali_file_path:
             assignment_match_regex = (
                 r"(const/\d+|const-string|new-instance|move-result-object)"
-                r" (\w+), \"?([^\"\s]+)\"?"
+                r" (\w+), \"?([^\"]+)\"?"
             )
             with open(smali_file_path, "r", encoding="utf-8") as file:
                 lines = file.readlines()
